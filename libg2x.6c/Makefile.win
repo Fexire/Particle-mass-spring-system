@@ -1,0 +1,53 @@
+# Project: g2x.6c
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = src/g2x_capture.o src/g2x_draw.o src/g2x_geoalgo.o src/g2x_pnm.o src/g2x_polygon.o src/g2x_tools.o src/g2x_transfo.o src/g2x_utils.o src/g2x_window.o
+LINKOBJ  = src/g2x_capture.o src/g2x_draw.o src/g2x_geoalgo.o src/g2x_pnm.o src/g2x_polygon.o src/g2x_tools.o src/g2x_transfo.o src/g2x_utils.o src/g2x_window.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib32" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -m32
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Users/incerti/NIMBUS/ENS/Kit.M1.M2.2021/libg2x.6c/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++" -I"C:/Users/incerti/NIMBUS/ENS/Kit.M1.M2.2021/libg2x.6c/include"
+BIN      = libg2x.6c.dll
+CXXFLAGS = $(CXXINCS) -ansi -m32 -DBUILDING_DLL=1
+CFLAGS   = $(INCS) -ansi -m32 -DBUILDING_DLL=1
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	ar r $(BIN) $(LINKOBJ)
+	ranlib $(BIN)
+
+src/g2x_capture.o: src/g2x_capture.c
+	$(CC) -c src/g2x_capture.c -o src/g2x_capture.o $(CFLAGS)
+
+src/g2x_draw.o: src/g2x_draw.c
+	$(CC) -c src/g2x_draw.c -o src/g2x_draw.o $(CFLAGS)
+
+src/g2x_geoalgo.o: src/g2x_geoalgo.c
+	$(CC) -c src/g2x_geoalgo.c -o src/g2x_geoalgo.o $(CFLAGS)
+
+src/g2x_pnm.o: src/g2x_pnm.c
+	$(CC) -c src/g2x_pnm.c -o src/g2x_pnm.o $(CFLAGS)
+
+src/g2x_polygon.o: src/g2x_polygon.c
+	$(CC) -c src/g2x_polygon.c -o src/g2x_polygon.o $(CFLAGS)
+
+src/g2x_tools.o: src/g2x_tools.c
+	$(CC) -c src/g2x_tools.c -o src/g2x_tools.o $(CFLAGS)
+
+src/g2x_transfo.o: src/g2x_transfo.c
+	$(CC) -c src/g2x_transfo.c -o src/g2x_transfo.o $(CFLAGS)
+
+src/g2x_utils.o: src/g2x_utils.c
+	$(CC) -c src/g2x_utils.c -o src/g2x_utils.o $(CFLAGS)
+
+src/g2x_window.o: src/g2x_window.c
+	$(CC) -c src/g2x_window.c -o src/g2x_window.o $(CFLAGS)
