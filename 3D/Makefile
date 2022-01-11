@@ -3,15 +3,15 @@
 # sont definies dans le fichier ~/.bashrc par le script ../install.sh
 #
 #compilateur
-CC = gcc
+CC = g++
 
-#compil en mode 'debug' ou optmisée (-O2)
+#compil en mode 'debug' ou optmisï¿½e (-O2)
 DBG = no
 
 ifeq ($(DBG),yes) #en mode debug
-  CFLAGS = -g -Wpointer-arith -Wall -ansi
+  CFLAGS = -g -Wpointer-arith -Wall -ansi -std=c++11
 else              #en mode normal
-  CFLAGS = -O2 -ansi
+  CFLAGS = -O2 -ansi -std=c++11
 endif
 
 # assemblage des infos de lib. et inc.
@@ -25,13 +25,13 @@ exec = g3x_example
 
 all : $(exec) clean
 
-# règle générique de création de xxx.o à partir de src/xxx.c
-%.o : $(src)%.c
+# rï¿½gle gï¿½nï¿½rique de crï¿½ation de xxx.o ï¿½ partir de src/xxx.c
+%.o : $(src)%.cpp
 	@echo "module $@"
 	@$(CC) $(CFLAGS) $(inc) -c $< -o $@
 	@echo "------------------------"
 
-# règle générique de création de l'executable xxx à partir de src/xxx.c (1 seul module)
+# rï¿½gle gï¿½nï¿½rique de crï¿½ation de l'executable xxx ï¿½ partir de src/xxx.c (1 seul module)
 % : %.o
 	@echo "assemblage [$^]->$@"
 	@$(CC) $^ $(lib) -o $@
@@ -39,7 +39,7 @@ all : $(exec) clean
 	
 .PHONY : clean cleanall ?
 
-# informations sur les paramètres de compilation       
+# informations sur les paramï¿½tres de compilation       
 ? :
 	@echo "---------compilation informations----------"
 	@echo "  processor      : $(PROCBIT)"
