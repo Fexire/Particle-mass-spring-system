@@ -8,6 +8,7 @@
 #include "MovingParticle.hpp"
 #include "FixedParticle.hpp"
 #include "Spring.hpp"
+#include "Gravity.hpp"
 #include <vector>
 #include <iostream>
 
@@ -36,8 +37,8 @@ void initParticlesAndLinks()
 	particles.emplace_back(new FixedParticle(Particle(g2x_Vector_XY(3,0), 1, G2Xcolor{0, 1, 0, 0})));
 	for(int i = 0; i<particles.size()-1;i++)
 	{
-		std::cout << i << std::endl;
 		links.emplace_back(new Spring(Link{*particles[i],*particles[i+1]}));
+		links.emplace_back(new Gravity(Link{*particles[i],*particles[i+1]}));
 	}
 }
 

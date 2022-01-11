@@ -8,7 +8,6 @@ public:
     Link(ParticleInterface &p1_, ParticleInterface &p2_) : p1(p1_), p2(p2_)
     {
         l0 = p2.getPosition().y- p1.getPosition().y;
-        p1.updateForce(fre);
     }
 
     void draw()
@@ -23,6 +22,11 @@ public:
         f += z * (p2.getVelocity() -  p1.getVelocity());
         p1.updateForce(f);
         p2.updateForce(-f);
+    }
+
+    void integrateGravity()
+    {
+        p1.updateForce(-10);
     }
 
     bool isOn()
@@ -48,6 +52,5 @@ private:
     double k;
     double z;
     double s;
-    double fre = -10 * 100;
     bool on;
 };
