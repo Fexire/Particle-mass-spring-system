@@ -9,7 +9,7 @@ public:
 
     virtual void draw() = 0;
 
-    virtual double &getPosition() = 0;
+    virtual G2Xvector &getPosition() = 0;
 
     virtual void updateForce(double extForce) = 0;
 

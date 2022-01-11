@@ -28,14 +28,15 @@ double z = 0.01 * m * Fe; // [0,0.1]
 
 void initParticlesAndLinks()
 {
-	particles.emplace_back(new FixedParticle(Particle(-3, 1, G2Xcolor{0, 1, 0, 0})));
-	particles.emplace_back(new FixedParticle(Particle(3, 1, G2Xcolor{0, 1, 0, 0})));
+	particles.emplace_back(new FixedParticle(Particle(g2x_Vector_XY(-3,0), 1, G2Xcolor{0, 1, 0, 0})));
 	for(int y = -2; y<3;y++)
 	{
-		particles.emplace_back(new MovingParticle{Particle(y, 1, G2Xcolor{1, 0, 0, 0}) });
+		particles.emplace_back(new MovingParticle{Particle(g2x_Vector_XY(y,0), 1, G2Xcolor{1, 0, 0, 0}) });
 	}
+	particles.emplace_back(new FixedParticle(Particle(g2x_Vector_XY(3,0), 1, G2Xcolor{0, 1, 0, 0})));
 	for(int i = 0; i<particles.size()-1;i++)
 	{
+		std::cout << i << std::endl;
 		links.emplace_back(new Spring(Link{*particles[i],*particles[i+1]}));
 	}
 }

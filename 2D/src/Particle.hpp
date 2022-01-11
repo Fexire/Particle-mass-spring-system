@@ -5,7 +5,7 @@
 class Particle
 {
 public:
-    Particle(double position_, double mass_, G2Xcolor color_) : position(position_), mass(mass_), color(color_)
+    Particle(G2Xvector position_, double mass_, G2Xcolor color_) : position(position_), mass(mass_), color(color_)
     {
     }
 
@@ -13,20 +13,20 @@ public:
 
     void draw()
     {
-        g2x_FillCircle(0, position, radius, color);
+        g2x_FillCircle(position.x,position.y , radius, color);
     }
 
     void eulerExp(double h)
     {
-        position += velocity * h; // Xn+1 = Xn + h * Vn
-        velocity += force * h ;    // Vn+1 = Vn + h * Fn
+        position.y += velocity * h; // Xn+1 = Xn + h * Vn
+        velocity += force * h/mass ;    // Vn+1 = Vn + h * Fn
         force = 0;
     }
 
     void leapFrog(double h)
     {
-        velocity += force * h ; // Vn+1 = Vn + h * Fn
-        position += velocity * h;  // Xn+1 = Xn + h * Vn+1
+        velocity += force * h/mass ; // Vn+1 = Vn + h * Fn
+        position.y += velocity * h;  // Xn+1 = Xn + h * Vn+1
         force = 0;
     }
 
@@ -36,7 +36,7 @@ public:
         force = 0;
     }
 
-    double& getPosition()
+    G2Xvector& getPosition()
     {
         return position;
     }
@@ -51,8 +51,7 @@ public:
         force += extForce;
     }
     
-
-    double position = 0;
+    G2Xvector position = g2x_Vector_XY(0,0);
 private :
     double velocity = 0;
     double force = 0;

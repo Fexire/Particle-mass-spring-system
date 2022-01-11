@@ -23,7 +23,7 @@ public:
         particle.draw();
     }
 
-    double &getPosition() override
+    G2Xvector &getPosition() override
     {
         return particle.getPosition();
     }
