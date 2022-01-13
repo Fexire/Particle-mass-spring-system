@@ -9,6 +9,7 @@
 #include "FixedParticle.hpp"
 #include "Spring.hpp"
 #include "Gravity.hpp"
+#include "Wind.hpp"
 #include <vector>
 #include <iostream>
 
@@ -27,30 +28,14 @@ double m = 1; // constant
 double k = 0.1; // dans [0,1]
 double z = 0.01; // [0,0.1]
 
-void initParticlesAndLinks()
-{
-	particles.emplace_back(new FixedParticle(Particle(G3Xvector{-3,0,0}, 1, G3Xcolor{0, 1, 0, 0})));
-	for(int y = -2; y<3;y++)
-	{
-		particles.emplace_back(new MovingParticle{Particle(G3Xvector{(double)y,0,0}, 1, G3Xcolor{1, 0, 0, 0}) });
-	}
-	particles.emplace_back(new FixedParticle(Particle(G3Xvector{3,0,0}, 1, G3Xcolor{0, 1, 0, 0})));
-	for(int i = 0; i<particles.size()-1;i++)
-	{
-		links.emplace_back(new Spring(Link{*particles[i],*particles[i+1]}));
-		links.emplace_back(new Gravity(Link{*particles[i],*particles[i+1]}));
-	}
-}
-
 void initFlag()
 {
 	int size = 10;
 	for(int x = 0; x<size;x++)
 	{
-		
 		for(int y = 0 ; y <size;y++)
 		{
-			if((x==0 and y == 0) or (x==0 and y ==size-1) or (x==size-1 and y == 0) or (x==size-1 and y == size-1) )
+			if(x==0 )
 			{
 				particles.emplace_back(new FixedParticle(Particle(G3Xvector{(double)x,(double)y,0}, 1, G3Xcolor{0, 1, 0, 0})));
 			}
@@ -61,19 +46,24 @@ void initFlag()
 	}
 	for(int i = 0; i<particles.size()-1;i++)
 	{
-		links.emplace_back(new Gravity(Link{*particles[i],*particles[i+1]}));
-		
+		links.emplace_back(new Gravity(Link{*particles[i],*particles[i]}));
+		links.emplace_back(new Wind(Link{*particles[i],*particles[i]}));
+		if(i%size!=size-1 && i<particles.size() - size)
+		{
+			links.emplace_back(new Spring(Link{*particles[i],*particles[i+size+1]}));
+		}
+		if(i%size!=0 && i<particles.size() - size)
+		{
+			links.emplace_back(new Spring(Link{*particles[i],*particles[i+size-1]}));
+		}
 		if(i%size!=size-1)
 		{
-			std::cout<<i%size<<std::endl;
 			links.emplace_back(new Spring(Link{*particles[i],*particles[i+1]}));
 		}
-		/*
-		if(i/size!=size-1)
+		if(i<particles.size() - size)
 		{
 			links.emplace_back(new Spring(Link{*particles[i],*particles[i+size]}));
-		}*/
-		
+		}
 	}
 }
 
@@ -95,6 +85,8 @@ static void init(void)
 /* la fonction de dessin : appelée en boucle */
 static void draw(void)
 {
+	glDisable(GL_LIGHTING); 
+	glPointSize(1);
 	for (LinkInterface *link : links)
 	{
 		link->draw();
@@ -131,6 +123,9 @@ int main(int argc, char **argv)
 	/* creation de la fenetre - titre et tailles (pixels) */
 	
 	g3x_InitWindow(*argv, WWIDTH, WHEIGHT);
+	g3x_SetPerspective(40.,100.,1.);
+	g3x_SetCameraSpheric(-PI/2,PI/2,50.,(G3Xpoint){0.,5.,0.});
+	g3x_SetPerspective(40.,100.,1.);
 	g3x_SetInitFunction(init); /* fonction d'initialisation */
 	g3x_SetDrawFunction(draw); /* fonction de dessin        */
 	g3x_SetAnimFunction(anim); /* fonction d'animation      */

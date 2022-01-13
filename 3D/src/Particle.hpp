@@ -14,16 +14,8 @@ public:
 
     void draw()
     {
-        /*
-        glPushMatrix();
-        glTranslatef(position.x,position.y,position.z);
-        g3x_Material(color,1,1,1,1,1.);
-        glutSolidSphere(radius,40,40);
-        glPopMatrix();
-        */
-        glPointSize(10);
-        glBegin(GL_POINTS);
         g3x_Color4fv(color);
+        glBegin(GL_POINTS);
         g3x_Vertex3dv(position);
         glEnd();
     }

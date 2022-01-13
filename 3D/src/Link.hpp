@@ -11,8 +11,8 @@ public:
 
     void draw()
     {
+        g3x_Color4fv(G3Xcolor{(float)k,(float)z,1});
         glBegin(GL_LINES);
-        g3x_Color4fv(G3Xcolor{1,1,1});
         g3x_Vertex3dv(p1.getPosition());
         g3x_Vertex3dv(p2.getPosition());
         glEnd();
@@ -32,6 +32,11 @@ public:
     void integrateGravity()
     {
         p1.updateForce(G3Xvector{0,-10,0});
+    }
+
+    void integrateWind()
+    {
+        p1.updateForce(G3Xvector{0,std::rand() / double(RAND_MAX) * 1.,std::rand() / double(RAND_MAX) * 10.});
     }
 
     bool isOn()
