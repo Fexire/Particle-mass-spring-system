@@ -11,7 +11,7 @@ public:
     {
     }
 
-    void integrate(double k,double z)  override
+    void integrate()  override
     {
         link.integrateWind();
     }

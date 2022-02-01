@@ -3,7 +3,7 @@
 class LinkInterface
 {
 public:
-    virtual void integrate(double k,double z) = 0;
+    virtual void integrate() = 0;
 
     virtual void draw() = 0;
 

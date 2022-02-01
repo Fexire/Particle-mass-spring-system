@@ -7,14 +7,14 @@ class Spring : public LinkInterface
 {
 
 public:
-    Spring(Link link_) : link(link_)
+    Spring(Link link_, double k_, double z_) : link(link_), k(k_), z(z_)
     {
+        l0 = link.getl0();
     }
 
-    void integrate(double k,double z)  override
+    void integrate() override
     {
-        link.update(k,z);
-        link.integrateRessortBrake();
+        link.integrateRessortBrake(l0,k,z);
     }
 
     void draw() override
@@ -34,4 +34,7 @@ public:
 
 private:
     Link link;
+    double k;
+    double z;
+    double l0;
 };

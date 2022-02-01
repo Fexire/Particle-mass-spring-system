@@ -1,7 +1,7 @@
 /*=================================================================*/
 /*= E.Incerti - eric.incerti@univ-eiffel.fr                       =*/
 /*= Université Gustave Eiffel                                     =*/
-/*= Code "squelette" pour prototypage avec libg2x.6c              =*/
+/*= Code "squelette" pour prototzpage avec libg2x.6c              =*/
 /*=================================================================*/
 
 #include <g3x.h>
@@ -24,47 +24,77 @@ static std::vector<LinkInterface *> links;
 
 double Fe = 100; //à régler à volonté
 double h = 1.;
-double m = 1; // constant
-double k = 0.1; // dans [0,1]
-double z = 0.01; // [0,0.1]
+double m = 1;				  // constant
+double k = 0.1 * m * Fe * Fe; // dans [0,1]
+double z = 0.01 * m * Fe;	  // [0,0.1]
+int size = 11;
 
 void initFlag()
 {
-	int size = 10;
-	for(int x = 0; x<size;x++)
+	for (int x = 0; x < size; x++)
 	{
-		for(int y = 0 ; y <size;y++)
+		for (int zc = 0; zc < size; zc++)
 		{
-			if(x==0 )
+			if (x == 0)
 			{
-				particles.emplace_back(new FixedParticle(Particle(G3Xvector{(double)x,(double)y,0}, 1, G3Xcolor{0, 1, 0, 0})));
+				particles.emplace_back(new FixedParticle(Particle(G3Xvector{(double)x,0 , (double)zc}, 1, G3Xcolor{0, 0, 0, 0})));
 			}
-			else{
-				particles.emplace_back(new MovingParticle{Particle(G3Xvector{(double)x,(double)y,0}, 1, G3Xcolor{1, 0, 0, 0}) });
+			else
+			{
+				particles.emplace_back(new MovingParticle{Particle(G3Xvector{(double)x, 0, (double)zc}, 1, G3Xcolor{0, 0, 0, 0})});
 			}
 		}
 	}
-	for(int i = 0; i<particles.size()-1;i++)
+	int i = 0;
+	for (int x = 0; x < size; x++)
 	{
-		links.emplace_back(new Gravity(Link{*particles[i],*particles[i]}));
-		links.emplace_back(new Wind(Link{*particles[i],*particles[i]}));
-		if(i%size!=size-1 && i<particles.size() - size)
+		k = pow(x-size, 2) / (pow(size, 2)) * 0.1 * m * Fe * Fe;
+		for (int zc = 0; zc < size; zc++)
 		{
-			links.emplace_back(new Spring(Link{*particles[i],*particles[i+size+1]}));
-		}
-		if(i%size!=0 && i<particles.size() - size)
-		{
-			links.emplace_back(new Spring(Link{*particles[i],*particles[i+size-1]}));
-		}
-		if(i%size!=size-1)
-		{
-			links.emplace_back(new Spring(Link{*particles[i],*particles[i+1]}));
-		}
-		if(i<particles.size() - size)
-		{
-			links.emplace_back(new Spring(Link{*particles[i],*particles[i+size]}));
+			links.emplace_back(new Gravity(Link{*particles[i], *particles[i], G3Xcolor{1, 1, 1}}));
+			links.emplace_back(new Wind(Link{*particles[i], *particles[i], G3Xcolor{1, 1, 1}}));
+			if (x < size - 1 && zc < size - 1)
+			{
+				links.emplace_back(new Spring(Link{*particles[i], *particles[i + size + 1], G3Xcolor{0, 0, 0}}, k, z));
+			}
+			if (x < size - 1 && zc > 0)
+			{
+				links.emplace_back(new Spring(Link{*particles[i], *particles[i + size - 1], G3Xcolor{0, 0, 0}}, k, z));
+			}
+			if (zc < size - 1)
+			{
+				links.emplace_back(new Spring(Link{*particles[i], *particles[i + 1], G3Xcolor{1, 1, 1}}, k, z));
+			}
+			if (x < size - 1)
+			{
+				links.emplace_back(new Spring(Link{*particles[i], *particles[i + size], G3Xcolor{1, 1, 1}}, k, z));
+			}
+			if (zc%2 == 0 && zc<size-1)
+			{
+				links.emplace_back(new Spring(Link{*particles[i], *particles[i + 2], G3Xcolor{0, 0, 0}}, k, z));
+			}
+			if (x%2==0 && x<size-1)
+			{
+				links.emplace_back(new Spring(Link{*particles[i], *particles[i + size * 2], G3Xcolor{0, 0, 0}}, k, z));
+			}
+			i++;
 		}
 	}
+}
+
+void reset()
+{
+	for (LinkInterface *link : links)
+	{
+		delete link;
+	}
+	for (ParticleInterface *particle : particles)
+	{
+		delete particle;
+	}
+	particles.clear();
+	links.clear();
+	initFlag();
 }
 
 /* la fonction d'initialisation : appelée 1 seule fois, au début */
@@ -74,18 +104,21 @@ static void init(void)
 	/* si cette fonction n'est pas appelée, les valeurs par défaut */
 	/* sont (-1.,-1)->(+1.,+1.)                                    */
 	initFlag();
+	/*
 	int id=g3x_CreateScrollv_d("Fe",&Fe,0,1000,1.0,"Fe");
-  	g3x_SetScrollColor(id,G3Xgb_c);
+	g3x_SetScrollColor(id,G3Xgb_c);
 	id=g3x_CreateScrollv_d("k",&k,0,1,0.1,"k");
-  	g3x_SetScrollColor(id,G3Xgb_c);
-	id=g3x_CreateScrollv_d("z",&z,0,0.1,0.01,"z");
-  	g3x_SetScrollColor(id,G3Xgb_c);
+	g3x_SetScrollColor(id,G3Xgb_c);
+	*/
+	int id=g3x_CreateScrollv_d("z",&z,0,0.1 * m * Fe,0.01 * m * Fe,"z");
+	g3x_SetScrollColor(id,G3Xgb_c);
+	g3x_SetKeyAction('r',reset,nullptr);
 }
 
 /* la fonction de dessin : appelée en boucle */
 static void draw(void)
 {
-	glDisable(GL_LIGHTING); 
+	glDisable(GL_LIGHTING);
 	glPointSize(1);
 	for (LinkInterface *link : links)
 	{
@@ -102,17 +135,25 @@ static void anim(void)
 {
 	for (LinkInterface *link : links)
 	{
-		link->integrate(k* m * Fe * Fe,z * m * Fe);
+		link->integrate();
 	}
 	for (ParticleInterface *particle : particles)
 	{
-		particle->integrate(h/Fe);
+		particle->integrate(h / Fe);
 	}
 }
 
 /* la fonction de sortie  (facultatif) -- atexit() */
 static void quit(void)
 {
+	for (LinkInterface *link : links)
+	{
+		delete link;
+	}
+	for (ParticleInterface *particle : particles)
+	{
+		delete particle;
+	}
 }
 
 /***************************************************************************/
@@ -121,11 +162,10 @@ static void quit(void)
 int main(int argc, char **argv)
 {
 	/* creation de la fenetre - titre et tailles (pixels) */
-	
+
 	g3x_InitWindow(*argv, WWIDTH, WHEIGHT);
-	g3x_SetPerspective(40.,100.,1.);
-	g3x_SetCameraSpheric(-PI/2,PI/2,50.,(G3Xpoint){0.,5.,0.});
-	g3x_SetPerspective(40.,100.,1.);
+	g3x_SetPerspective(40., 1000., 1.);
+	g3x_SetCameraCartesian({-size*3.,size*2.,0},{size/2.,0,size/2.});
 	g3x_SetInitFunction(init); /* fonction d'initialisation */
 	g3x_SetDrawFunction(draw); /* fonction de dessin        */
 	g3x_SetAnimFunction(anim); /* fonction d'animation      */
