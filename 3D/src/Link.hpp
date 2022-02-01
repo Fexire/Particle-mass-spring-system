@@ -12,11 +12,6 @@ public:
     void draw()
     {
         g3x_Color4fv({(float)force.x,(float)force.y,(float)force.z});
-        /*
-        float power = g3x_Norm(force);
-        g3x_Color4fv({power/200.f,1,0});
-        */
-        //g3x_Color4fv({(1 - distance) * 1.9f ,0,0});
         glBegin(GL_LINES);
         g3x_Vertex3dv(p1.getPosition());
         g3x_Vertex3dv(p2.getPosition());
@@ -32,7 +27,6 @@ public:
         f = f + ((p2.getVelocity() - p1.getVelocity()) * z);
         p1.updateForce(f);
         p2.updateForce(f * -1);
-        distance = l0/d;
         force=f;
     }
 
@@ -64,8 +58,7 @@ public:
 private:
     ParticleInterface &p1;
     ParticleInterface &p2;
-    G3Xvector force;
-    float distance;
+    G3Xvector force = {1,1,1};
     G3Xcolor color;
     bool on;
 };

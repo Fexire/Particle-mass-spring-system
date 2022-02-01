@@ -24,31 +24,31 @@ static std::vector<LinkInterface *> links;
 
 double Fe = 100; //à régler à volonté
 double h = 1.;
-double m = 1;				  // constant
-double k = 0.1 * m * Fe * Fe; // dans [0,1]
-double z = 0.01 * m * Fe;	  // [0,0.1]
+double k = 0.1 * Fe * Fe; // dans [0,1]
+double z = 0.01 * Fe;	  // [0,0.1]
 int size = 11;
 
 void initFlag()
 {
 	for (int x = 0; x < size; x++)
 	{
+		double m = pow(x +1, 2) / (pow(size, 2)) + 1;
 		for (int zc = 0; zc < size; zc++)
 		{
 			if (x == 0)
 			{
-				particles.emplace_back(new FixedParticle(Particle(G3Xvector{(double)x,0 , (double)zc}, 1, G3Xcolor{0, 0, 0, 0})));
+				particles.emplace_back(new FixedParticle(Particle(G3Xvector{(double)x, 0, (double)zc}, m, G3Xcolor{0, 0, 0, 0})));
 			}
 			else
 			{
-				particles.emplace_back(new MovingParticle{Particle(G3Xvector{(double)x, 0, (double)zc}, 1, G3Xcolor{0, 0, 0, 0})});
+				particles.emplace_back(new MovingParticle{Particle(G3Xvector{(double)x, 0, (double)zc}, m, G3Xcolor{0, 0, 0, 0})});
 			}
 		}
 	}
 	int i = 0;
 	for (int x = 0; x < size; x++)
 	{
-		k = pow(x-size, 2) / (pow(size, 2)) * 0.1 * m * Fe * Fe;
+		k = pow(x - size, 2) / (pow(size, 2)) * 0.1 * Fe * Fe;
 		for (int zc = 0; zc < size; zc++)
 		{
 			links.emplace_back(new Gravity(Link{*particles[i], *particles[i], G3Xcolor{1, 1, 1}}));
@@ -69,11 +69,11 @@ void initFlag()
 			{
 				links.emplace_back(new Spring(Link{*particles[i], *particles[i + size], G3Xcolor{1, 1, 1}}, k, z));
 			}
-			if (zc%2 == 0 && zc<size-1)
+			if (zc % 2 == 0 && zc < size - 1)
 			{
 				links.emplace_back(new Spring(Link{*particles[i], *particles[i + 2], G3Xcolor{0, 0, 0}}, k, z));
 			}
-			if (x%2==0 && x<size-1)
+			if (x % 2 == 0 && x < size - 1)
 			{
 				links.emplace_back(new Spring(Link{*particles[i], *particles[i + size * 2], G3Xcolor{0, 0, 0}}, k, z));
 			}
@@ -110,9 +110,9 @@ static void init(void)
 	id=g3x_CreateScrollv_d("k",&k,0,1,0.1,"k");
 	g3x_SetScrollColor(id,G3Xgb_c);
 	*/
-	int id=g3x_CreateScrollv_d("z",&z,0,0.1 * m * Fe,0.01 * m * Fe,"z");
-	g3x_SetScrollColor(id,G3Xgb_c);
-	g3x_SetKeyAction('r',reset,nullptr);
+	int id = g3x_CreateScrollv_d("z", &z, 0, 0.1 * Fe, 0.01 * Fe, "z");
+	g3x_SetScrollColor(id, G3Xgb_c);
+	g3x_SetKeyAction('r', reset, nullptr);
 }
 
 /* la fonction de dessin : appelée en boucle */
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
 
 	g3x_InitWindow(*argv, WWIDTH, WHEIGHT);
 	g3x_SetPerspective(40., 1000., 1.);
-	g3x_SetCameraCartesian({-size*3.,size*2.,0},{size/2.,0,size/2.});
+	g3x_SetCameraCartesian({-size * 3., size * 2., 0}, {size / 2., 0, size / 2.});
 	g3x_SetInitFunction(init); /* fonction d'initialisation */
 	g3x_SetDrawFunction(draw); /* fonction de dessin        */
 	g3x_SetAnimFunction(anim); /* fonction d'animation      */
