@@ -27,12 +27,13 @@ double h = 1.;
 double k = 0.1 * Fe * Fe; // dans [0,1]
 double z = 0.01 * Fe;	  // [0,0.1]
 int size = 11;
+bool quadView = false;
 
 void initFlag()
 {
 	for (int x = 0; x < size; x++)
 	{
-		double m = pow(x +1, 2) / (pow(size, 2)) + 1;
+		double m = pow(x + 1, 2) / (pow(size, 2)) + 1;
 		for (int zc = 0; zc < size; zc++)
 		{
 			if (x == 0)
@@ -97,6 +98,11 @@ void reset()
 	initFlag();
 }
 
+void switchVisu()
+{
+	quadView = !quadView;
+}
+
 /* la fonction d'initialisation : appelée 1 seule fois, au début */
 static void init(void)
 {
@@ -113,20 +119,41 @@ static void init(void)
 	int id = g3x_CreateScrollv_d("z", &z, 0, 0.1 * Fe, 0.01 * Fe, "z");
 	g3x_SetScrollColor(id, G3Xgb_c);
 	g3x_SetKeyAction('r', reset, nullptr);
+	g3x_SetKeyAction('s', switchVisu, nullptr);
 }
 
 /* la fonction de dessin : appelée en boucle */
 static void draw(void)
 {
 	glDisable(GL_LIGHTING);
-	glPointSize(1);
-	for (LinkInterface *link : links)
+	if (quadView)
 	{
-		link->draw();
+		int i = 0;
+		for (int i = 0; i < size * (size - 1); i++)
+		{
+			if (i % size < size - 1)
+			{
+				glColor3f(i % 2, 0, (i + 1) % 2);
+				glBegin(GL_QUADS);
+				g3x_Vertex3dv(particles[i]->getPosition());
+				g3x_Vertex3dv(particles[i + 1]->getPosition());
+				g3x_Vertex3dv(particles[i + size + 1]->getPosition());
+				g3x_Vertex3dv(particles[i + size]->getPosition());
+				glEnd();
+			}
+		}
 	}
-	for (ParticleInterface *particle : particles)
+	else
 	{
-		particle->draw();
+		glPointSize(1);
+		for (LinkInterface *link : links)
+		{
+			link->draw();
+		}
+		for (ParticleInterface *particle : particles)
+		{
+			particle->draw();
+		}
 	}
 }
 
