@@ -11,10 +11,13 @@ public:
 
     void draw()
     {
-        g3x_Color4fv({(float)force.x,(float)force.y,(float)force.z});
+        G3Xvector force_norm = force;
+        g3x_Normalize(&force_norm);
+        g3x_Color4fv({(float)(force.x+1)/2,(float)(force.y+1)/2,(float)(force.z+1)/2});
+        G3Xvector mid_position = p1.getPosition() + ((p2.getPosition() - p1.getPosition()) /2) ;
         glBegin(GL_LINES);
-        g3x_Vertex3dv(p1.getPosition());
-        g3x_Vertex3dv(p2.getPosition());
+        g3x_Vertex3dv(mid_position);
+        g3x_Vertex3dv(mid_position + force_norm);
         glEnd();
     }
 
@@ -37,7 +40,7 @@ public:
 
     void integrateWind()
     {
-        p1.updateForce(G3Xvector{0, std::rand() / double(RAND_MAX) * 50., std::rand() / double(RAND_MAX) * 50.});
+        p1.updateForce(G3Xvector{0, 25., 25.});
     }
 
     double getl0()
@@ -58,7 +61,7 @@ public:
 private:
     ParticleInterface &p1;
     ParticleInterface &p2;
-    G3Xvector force = {1,1,1};
+    G3Xvector force = {0,0,0};
     G3Xcolor color;
     bool on;
 };

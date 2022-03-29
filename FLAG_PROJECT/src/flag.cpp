@@ -27,15 +27,16 @@ double h = 1.;
 double k = 0.1 * Fe * Fe; // dans [0,1]
 double z = 0.01 * Fe;	  // [0,0.1]
 int size = 11;
-bool quadView = false;
+bool quadView = true;
 
 void initFlag()
 {
+	std::srand(time(NULL));
 	for (int x = 0; x < size; x++)
 	{
-		double m = pow(x + 1, 2) / (pow(size, 2)) + 1;
 		for (int zc = 0; zc < size; zc++)
 		{
+			double m = pow(x + -(zc-size) + 1, 2) / (pow(size+size, 2)) + 1;
 			if (x == 0)
 			{
 				particles.emplace_back(new FixedParticle(Particle(G3Xvector{(double)x, 0, (double)zc}, m, G3Xcolor{0, 0, 0, 0})));
@@ -106,18 +107,7 @@ void switchVisu()
 /* la fonction d'initialisation : appelée 1 seule fois, au début */
 static void init(void)
 {
-	/* zone graphique reelle associee a la fenetre                 */
-	/* si cette fonction n'est pas appelée, les valeurs par défaut */
-	/* sont (-1.,-1)->(+1.,+1.)                                    */
 	initFlag();
-	/*
-	int id=g3x_CreateScrollv_d("Fe",&Fe,0,1000,1.0,"Fe");
-	g3x_SetScrollColor(id,G3Xgb_c);
-	id=g3x_CreateScrollv_d("k",&k,0,1,0.1,"k");
-	g3x_SetScrollColor(id,G3Xgb_c);
-	*/
-	int id = g3x_CreateScrollv_d("z", &z, 0, 0.1 * Fe, 0.01 * Fe, "z");
-	g3x_SetScrollColor(id, G3Xgb_c);
 	g3x_SetKeyAction('r', reset, nullptr);
 	g3x_SetKeyAction('s', switchVisu, nullptr);
 }
@@ -145,7 +135,6 @@ static void draw(void)
 	}
 	else
 	{
-		glPointSize(1);
 		for (LinkInterface *link : links)
 		{
 			link->draw();
